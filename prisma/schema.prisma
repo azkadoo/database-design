@@ -11,3 +11,54 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+model Customer {
+  id Int @id @default(autoincrement())
+  name String
+  phoneNumber String
+  address String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+
+  product Product[]
+}
+
+model Product {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  price       Int
+  size        String
+
+  categoryId Int
+  category Category @relation(fields: [categoryId], references: [id])
+}
+
+model Order {
+  id        Int    @id @default(autoincrement())
+  status    String
+  createdAt DateTime
+}
+
+model OrderItem {
+  id    Int @id @default(autoincrement())
+  qty   Int
+  price Int
+}
+
+model Review {
+  id     Int    @id @default(autoincrement())
+  rating Int
+  review String
+}
+
+model CartItem {
+  id  Int @id @default(autoincrement())
+  qty Int
+}
