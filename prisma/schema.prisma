@@ -13,12 +13,16 @@ datasource db {
 }
 
 model Customer {
-  id Int @id @default(autoincrement())
-  name String
+  id          Int      @id @default(autoincrement())
+  name        String
   phoneNumber String
-  address String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  address     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  order    Order[] // state a foreign key to product, satu customer bisa punya banyak order
+  cartItem CartItem[] // state a foreign key to cartItem, satu customer bisa punya banyak cartItem
+  review   Review[]
 }
 
 model Category {
@@ -26,7 +30,7 @@ model Category {
   name        String
   description String?
 
-  product Product[]
+  product Product[] // state a foreign key to product, satu category bisa punya banyak product
 }
 
 model Product {
@@ -36,29 +40,53 @@ model Product {
   price       Int
   size        String
 
-  categoryId Int
-  category Category @relation(fields: [categoryId], references: [id])
+  cartItem CartItem[]
+
+  categoryId Int // define attribut foreign key dari product
+  category   Category @relation(fields: [categoryId], references: [id]) // ambil relation dari category
+
+  review Review[]
 }
 
 model Order {
-  id        Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   status    String
   createdAt DateTime
+
+  customerId Int // define attribute foreign key dari customer
+  customer   Customer @relation(fields: [customerId], references: [id]) // ambil relation dari customer
+
+  orderItems OrderItem[] // state a foreign key to orderItem, satu Order bisa punya banyak orderItem
 }
 
 model OrderItem {
   id    Int @id @default(autoincrement())
   qty   Int
   price Int
+
+  OrderId Int // define attribut foreign key dari Order
+  order   Order @relation(fields: [OrderId], references: [id]) // ambil relation dari order
 }
 
 model Review {
   id     Int    @id @default(autoincrement())
   rating Int
   review String
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
 }
 
 model CartItem {
   id  Int @id @default(autoincrement())
   qty Int
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
 }
